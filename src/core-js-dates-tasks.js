@@ -47,9 +47,19 @@ function getTime(date) {
  * '2024-01-30T00:00:00.000Z' => 'Tuesday'
  */
 function getDayName(date) {
+  const dayOfWeek = [
+    'Sunday',
+    'Monday',
+    'Tuesday',
+    'Wednesday',
+    'Thursday',
+    'Friday',
+    'Saturday',
+  ];
+
   const dateString = new Date(date);
-  const options = { weekday: 'long' };
-  return new Intl.DateTimeFormat('en-US', options).format(dateString);
+  const dayIndex = dateString.getUTCDay();
+  return dayOfWeek[dayIndex];
 }
 
 /**
@@ -63,7 +73,19 @@ function getDayName(date) {
  * Date('2024-02-13T00:00:00Z') => Date('2024-02-16T00:00:00Z')
  * Date('2024-02-16T00:00:00Z') => Date('2024-02-23T00:00:00Z')
  */
-function getNextFriday(/* date */) {}
+function getNextFriday(date) {
+  const dayOfWeek = date.getUTCDay();
+  const dayUntilFriday = (5 - dayOfWeek + 7) % 7;
+  const nextFriday = new Date(
+    date.getTime() + dayUntilFriday * 24 * 60 * 60 * 1000
+  );
+
+  if (dayOfWeek === 5) {
+    nextFriday.setDate(nextFriday.getDate() + 7);
+  }
+
+  return nextFriday;
+}
 
 /**
  * Returns the number of days in a specified month and year.
@@ -116,8 +138,12 @@ function getCountDaysOnPeriod(dateStart, dateEnd) {
  * '2024-02-02', { start: '2024-02-02', end: '2024-03-02' } => true
  * '2024-02-10', { start: '2024-02-02', end: '2024-03-02' } => true
  */
-function isDateInPeriod(/* date, period */) {
-  throw new Error('Not implemented');
+function isDateInPeriod(date, period) {
+  const startDate = new Date(period.start);
+  const endDate = new Date(period.end);
+  const checkDate = new Date(date);
+
+  return checkDate >= startDate && checkDate <= endDate;
 }
 
 /**
@@ -194,8 +220,9 @@ function getNextFridayThe13th(/* date */) {
  * Date(2024, 5, 1) => 2
  * Date(2024, 10, 10) => 4
  */
-function getQuarter(/* date */) {
-  throw new Error('Not implemented');
+function getQuarter(date) {
+  const month = date.getMonth();
+  return Math.floor(month / 3) + 1;
 }
 
 /**
